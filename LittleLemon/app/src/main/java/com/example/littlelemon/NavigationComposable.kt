@@ -1,6 +1,7 @@
 package com.example.littlelemon
 
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
@@ -13,7 +14,7 @@ fun MyNavigation(navController: NavHostController) {
 
     val context = LocalContext.current
 
-    val sharedPreferences = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+    val sharedPreferences = context.getSharedPreferences("UserPrefs", MODE_PRIVATE)
     val startDest = if (sharedPreferences.contains("firstName")) { Home } else { Onboarding }
 
     NavHost(navController = navController, startDestination = startDest.route) {
