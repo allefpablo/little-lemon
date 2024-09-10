@@ -43,12 +43,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             LittleLemonTheme {
-                // Get elements from database
-                val databaseMenuItems by
-                    database.menuItemDao().getAll().observeAsState(emptyList())
-
-                databaseMenuItems.sortedBy { it.title }
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
