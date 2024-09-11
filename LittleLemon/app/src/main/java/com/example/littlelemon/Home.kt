@@ -33,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -69,15 +70,24 @@ fun Home(navController: NavHostController) {
 
         Header(navController = navController)
 
-        var query = remember {
+        var searchPhrase = rememberSaveable {
             mutableStateOf("")
         }
 
-        Hero()
+        Hero() {
+            searchPhrase.value = it
+        }
 
-        //databaseMenuItems.filter{ it.title.contains(query.value, ignoreCase = true) }
+        var filteredMenuItems = databaseMenuItems
 
-        MenuItems(items = databaseMenuItems)
+        // add is not empty check here
+        if (searchPhrase.value != "") {
+            filteredMenuItems = databaseMenuItems.filter {
+                it.title.lowercase().contains(searchPhrase.value, ignoreCase = true)
+            }
+        }
+
+        MenuItems(items = filteredMenuItems)
     }
 }
 
@@ -111,9 +121,9 @@ fun Header(navController: NavHostController) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Hero() {
-
+fun Hero(search: (String) -> Unit) {
     Column(modifier = Modifier
         .background(color = Color(0xFF495E57))
         .padding(start = 10.dp)
@@ -156,34 +166,27 @@ fun Hero() {
             )
         }
 
-        SearchBar()
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchBar(modifier: Modifier = Modifier) {
-
-    // query to search
-    var query = remember {
-        mutableStateOf("")
-    }
-
-    TextField(value = query.value,
-        onValueChange = {
-            query.value = it },
-        shape = RoundedCornerShape(10.dp),
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(10.dp),
-        leadingIcon = {
-            Icon(imageVector = Icons.Default.Search,
-                contentDescription = "Search Icon")
-        },
-        placeholder = {
-            Text(text = "Enter Search Phrase")
+        var searchPhrase = rememberSaveable {
+            mutableStateOf("")
         }
-    )
+
+        TextField(value = searchPhrase.value,
+            onValueChange = {
+                searchPhrase.value = it
+                search(it) },
+            shape = RoundedCornerShape(10.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            leadingIcon = {
+                Icon(imageVector = Icons.Default.Search,
+                    contentDescription = "Search Icon")
+            },
+            placeholder = {
+                Text(text = "Enter Search Phrase")
+            }
+        )
+    }
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
