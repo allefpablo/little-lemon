@@ -22,6 +22,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -74,6 +76,10 @@ fun Home(navController: NavHostController) {
             mutableStateOf("")
         }
 
+        var clicked = rememberSaveable {
+            mutableStateOf("")
+        }
+
         Hero() {
             searchPhrase.value = it
         }
@@ -83,9 +89,99 @@ fun Home(navController: NavHostController) {
         // add is not empty check here
         if (searchPhrase.value != "") {
             filteredMenuItems = databaseMenuItems.filter {
-                it.title.lowercase().contains(searchPhrase.value, ignoreCase = true)
+                it.title.contains(searchPhrase.value, ignoreCase = true)
+            }
+        } else if (clicked.value != ""){
+            filteredMenuItems =  databaseMenuItems.filter {
+                it.category.equals(clicked.value, ignoreCase = true)
             }
         }
+
+        Text(
+            text = "ORDER FOR DELIVERY!",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily(Font(R.font.karla_regular)),
+            modifier = Modifier.padding(5.dp)
+        )
+        
+        Row(
+            modifier = Modifier.padding(start = 5.dp, end = 5.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Button(
+                onClick = {
+                    clicked.value = "starters"
+                },
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)
+            ) {
+                Text(
+                    text = "Starters",
+                    color = Color.DarkGray,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily(Font(R.font.karla_regular))
+                )
+            }
+
+            Button(
+                onClick = {
+                    clicked.value = "mains"
+                },
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray),
+                modifier = Modifier.padding(5.dp)
+            ) {
+                Text(
+                    text = "Mains",
+                    color = Color.DarkGray,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily(Font(R.font.karla_regular))
+                )
+            }
+
+            Button(
+                onClick = {
+                    clicked.value = "desserts"
+                },
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray),
+                modifier = Modifier.padding(5.dp)
+            ) {
+                Text(
+                    text = "Desserts",
+                    color = Color.DarkGray,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily(Font(R.font.karla_regular)),
+                )
+            }
+
+            Button(
+                onClick = {
+                    clicked.value = "drinks"
+                },
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray),
+            ) {
+                Text(
+                    text = "Drinks",
+                    color = Color.DarkGray,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily(Font(R.font.karla_regular))
+                )
+            }
+        }
+
+        Divider(
+            modifier = Modifier
+                .padding(vertical = 10.dp)
+                .height(1.dp),
+        )
 
         MenuItems(items = filteredMenuItems)
     }
